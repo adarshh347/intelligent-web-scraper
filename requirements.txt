@@ -1,2 +1,2 @@
 crawl4ai
-pydantic
+pydanticwhere
