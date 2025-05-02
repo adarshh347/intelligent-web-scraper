@@ -1,0 +1,2 @@
+model_name="groq/llama3-70b-8192"
+groq_api_key="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"

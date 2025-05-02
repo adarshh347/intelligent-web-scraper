@@ -11,25 +11,36 @@ base_url = "https://www.theknot.com/marketplace/wedding-reception-venues-atlanta
 
 url_filter = URLPatternFilter(patterns=["wedding-vision   ", "atlanta/buckhead"])
 
-async def main():
-    config= CrawlerRunConfig(
+async def extract_list():
+    run_config= CrawlerRunConfig(
         deep_crawl_strategy=BFSDeepCrawlStrategy(
             max_depth=2,
             include_external=False,
-            max_pages=50,
-            filter_chain=FilterChain([url_filter])
+            max_pages=10,
+            # filter_chain=FilterChain([url_filter])
 
         ),
+        
         scraping_strategy=LXMLWebScrapingStrategy(),
         verbose=True
     )
-    async with AsyncWebCrawler() as crawler:
-        results = await crawler.arun(url=base_url, config=config)
+    browser_config=BrowserConfig(
+            #  render_js=True,
+             headless=False,
+              executable_path="C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+        )
+    async with AsyncWebCrawler(config=browser_config) as crawler:
+        results = await crawler.arun(url=base_url, config=run_config)
         print(f"Crawler {len(results)} pages in total")
-        for result in results:
-            print(f"URL: {result.url}")
-            print(f"Depth: {result.metadata.get('depth',0)}")
+        return [
+             {
+                  "url":result.url,
+                  "depth": result.metadata.get("depth", 0)
 
-if __name__ == "__main__":
-        asyncio.run(main())
+             }
+             for result in results
+        ]
+
+# if __name__ == "__main__":
+#         asyncio.run(main())
 
